@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isingiro Visit Budget</title>
+<meta name="description" content="Live budget and expenditure report for the Isingiro visit, in Uganda Shillings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+
+/* Layout: a formal white ledger sheet — summary up top, treasurer's desk (editors only), then line detail and the record book. Single light look by design. */
+:root {
+  --paper: #ffffff;
+  --ink: #17202e;
+  --muted: #5a6473;
+  --rule: #d8dde5;
+  --rule-soft: #edf0f4;
+  --wash: #f4f6f9;
+  --navy: #1d3557;
+  --navy-soft: #a9b9cf;
+  --navy-pale: #e5ebf3;
+  --free: #cfe2d5;
+  --good: #1e6a43; --good-bg: #e6f2eb;
+  --bad: #a52a2a;  --bad-bg: #f8e8e8;
+  --warn: #8a5a0a; --warn-bg: #fbf0dc;
+  --font-display: "Libre Baskerville", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r: 6px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.sheet {
+  max-width: 1160px; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(20px, 4vw, 44px);
+  display: grid; gap: clamp(20px, 3vw, 32px);
+}
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+.eyebrow { font-size: 12px; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.title { font-family: var(--font-display); font-weight: 400; color: var(--navy); font-size: clamp(1.7rem, 3.6vw, 2.4rem); line-height: 1.15; margin: 6px 0 12px; }
+.head { border-bottom: 3px double var(--navy); padding-bottom: 18px; }
+.lede { margin: 0; max-width: 64ch; }
+.lede b { color: var(--navy); font-weight: 700; }
+.lede b.neg { color: var(--bad); }
+.meta { margin-top: 10px; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
+.role { display: inline-flex; align-items: center; gap: 6px; padding: 2px 10px; border-radius: 999px; background: var(--wash); border: 1px solid var(--rule); font-size: 12px; color: var(--ink); }
+.role i { width: 7px; height: 7px; border-radius: 50%; background: var(--navy-soft); }
+.role.editor i { background: var(--good); }
+
+.notice { padding: 12px 16px; border: 1px solid var(--rule); background: var(--wash); border-radius: var(--r); font-size: 14px; }
+
+/* headline figures */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr)); border: 1px solid var(--rule); border-radius: var(--r); overflow: hidden; }
+.kpi { padding: 14px 18px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 0 -1px -1px 0; min-width: 0; }
+.kpi.accent { background: var(--wash); }
+.kpi-l { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+.kpi-v { display: flex; align-items: baseline; gap: 6px; margin-top: 6px; }
+.cur { font-size: 12px; color: var(--muted); }
+.big { font-family: var(--font-display); font-size: clamp(1.35rem, 2.3vw, 1.75rem); color: var(--ink); }
+.big.pos { color: var(--good); } .big.neg { color: var(--bad); }
+.kpi-n { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+/* cards */
+.card { border: 1px solid var(--rule); border-radius: var(--r); padding: clamp(16px, 2.4vw, 24px); background: var(--paper); min-width: 0; }
+.card-h { font-size: 17px; font-weight: 600; color: var(--ink); }
+.card-n { font-size: 13px; color: var(--muted); margin: 4px 0 16px; max-width: 75ch; }
+.sec-h { font-family: var(--font-display); font-weight: 400; color: var(--navy); font-size: 1.35rem; margin-bottom: -8px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr)); gap: 16px; align-items: start; }
+
+/* allocation */
+.alloc { display: flex; height: 22px; border-radius: 3px; overflow: hidden; background: var(--rule-soft); }
+.alloc span { height: 100%; }
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 10px; margin-top: 14px; }
+.leg { display: flex; gap: 8px; }
+.sw { width: 11px; height: 11px; border-radius: 2px; margin-top: 4px; flex: none; display: inline-block; }
+.leg-l { font-size: 12.5px; color: var(--muted); }
+.leg-v { font-weight: 600; }
+.warnline { margin: 10px 0 0; color: var(--bad); font-size: 13px; }
+
+/* bar chart */
+.keys { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+.keys span { display: inline-flex; align-items: center; gap: 6px; }
+.bars { display: grid; gap: 7px; }
+.bar-row { display: grid; grid-template-columns: minmax(7rem, 38%) 1fr; gap: 10px; align-items: center; font-size: 13px; position: relative; }
+.bar-l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; color: var(--ink); }
+.bar-t { position: relative; height: 18px; }
+.bar-e { position: absolute; inset: 0 auto 0 0; background: var(--navy-pale); border: 1px solid var(--navy-soft); border-radius: 3px; }
+.bar-a { position: absolute; left: 0; top: 4px; bottom: 4px; background: var(--navy); border-radius: 2px; }
+.bar-a.over { background: var(--bad); }
+.bar-row:hover .bar-l { color: var(--navy); font-weight: 600; }
+.axis { display: grid; grid-template-columns: minmax(7rem, 38%) 1fr; gap: 10px; font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+.axis div:last-child { display: flex; justify-content: space-between; border-top: 1px solid var(--rule); padding-top: 3px; }
+.tip { position: absolute; z-index: 5; pointer-events: none; background: var(--paper); border: 1px solid var(--rule); border-radius: var(--r); box-shadow: 0 6px 18px rgba(23, 32, 46, .12); padding: 6px 10px; font-size: 12.5px; white-space: nowrap; }
+.tip b { display: block; color: var(--muted); font-weight: 500; margin-bottom: 2px; }
+
+/* tables */
+.tw { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--r); max-height: 36rem; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { position: sticky; top: 0; z-index: 1; background: var(--wash); text-align: left; font-weight: 600; padding: 9px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+td { padding: 8px 10px; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+tbody tr:nth-child(even) td { background: #fafbfc; }
+.n { text-align: right; white-space: nowrap; }
+.mut { color: var(--muted); }
+.pos { color: var(--good); } .neg { color: var(--bad); }
+tr.total td { font-weight: 700; background: var(--wash); border-top: 2px solid var(--navy); }
+tr.bal-last td { font-weight: 600; }
+.pill { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 11.5px; white-space: nowrap; }
+.pill.done { color: var(--good); background: var(--good-bg); }
+.pill.part { color: var(--warn); background: var(--warn-bg); }
+.pill.none { color: var(--muted); background: var(--wash); }
+.pill.out { color: var(--bad); background: var(--bad-bg); }
+.empty { padding: 18px; text-align: center; color: var(--muted); font-size: 13.5px; }
+.by { display: block; font-size: 11.5px; color: var(--muted); }
+@media (max-width: 640px) { .hide-sm { display: none; } }
+
+/* treasurer's desk */
+.desk { border: 1px solid var(--navy-soft); background: #fbfcfe; }
+.desk-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: flex-end; margin-bottom: 14px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab { font: inherit; font-size: 13.5px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.tab[aria-selected="true"] { background: var(--navy); color: #fff; border-color: var(--navy); }
+.tab:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 12px 14px; }
+.f { display: grid; gap: 4px; min-width: 0; }
+.f.wide { grid-column: 1 / -1; }
+.f label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
+.f small { font-size: 11.5px; color: var(--muted); }
+input, select { font: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); color: var(--ink); width: 100%; min-width: 0; }
+input[readonly] { background: var(--wash); color: var(--muted); }
+.actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 2px; }
+.btn { font: inherit; font-size: 14px; font-weight: 600; padding: 9px 18px; border-radius: 4px; border: 1px solid var(--navy); background: var(--navy); color: #fff; cursor: pointer; }
+.btn.ghost { background: var(--paper); color: var(--navy); }
+.btn.danger { background: var(--paper); color: var(--bad); border-color: var(--bad); }
+.btn.sm { font-size: 12px; padding: 3px 10px; font-weight: 600; }
+.btn:disabled { opacity: .55; cursor: default; }
+.status { font-size: 13px; }
+.status.ok { color: var(--good); } .status.err { color: var(--bad); }
+</style>
+</head>
+<body>
+<main class="sheet">
+  <header class="head">
+    <div class="eyebrow">Treasurer’s transparency report · All amounts in Uganda Shillings (UGX)</div>
+    <h1 class="title">Isingiro visit — budget and expenditure</h1>
+    <p class="lede" id="lede">Loading the latest figures…</p>
+    <div class="meta">
+      <span id="updated">Figures refresh automatically every few minutes.</span>
+      <button class="btn sm ghost" type="button" id="refresh">Refresh now</button>
+    </div>
+  </header>
+
+  <div class="notice" id="nodb" hidden></div>
+
+  <section class="kpis" aria-label="Headline figures">
+    <div class="kpi"><div class="kpi-l">Funds received</div><div class="kpi-v"><span class="cur">UGX</span><span class="big" id="k-funds">—</span></div><div class="kpi-n">All money in, including the opening balance</div></div>
+    <div class="kpi"><div class="kpi-l">Total budget</div><div class="kpi-v"><span class="cur">UGX</span><span class="big" id="k-budget">—</span></div><div class="kpi-n">All budget lines, including contingency</div></div>
+    <div class="kpi"><div class="kpi-l">Spent to date</div><div class="kpi-v"><span class="cur">UGX</span><span class="big" id="k-spent">—</span></div><div class="kpi-n"><span id="k-share">—</span> of the total budget</div></div>
+    <div class="kpi accent"><div class="kpi-l">Cash on hand</div><div class="kpi-v"><span class="cur">UGX</span><span class="big" id="k-cash">—</span></div><div class="kpi-n">Funds received minus spent to date</div></div>
+    <div class="kpi"><div class="kpi-l">Projected balance at the end</div><div class="kpi-v"><span class="cur">UGX</span><span class="big" id="k-proj">—</span></div><div class="kpi-n">Cash on hand minus the cost still to come</div></div>
+  </section>
+
+  <section class="card" aria-labelledby="alloc-h">
+    <h2 class="card-h" id="alloc-h">Where the money stands</h2>
+    <p class="card-n">The funds received, split into what has been spent, what the remaining budget lines are expected to cost, and what is not allocated to any line.</p>
+    <div class="alloc" id="alloc" role="img" aria-label="Split of funds received"></div>
+    <div class="legend">
+      <div class="leg"><span class="sw" style="background:var(--navy)"></span><div><div class="leg-l">Spent</div><div class="leg-v">UGX <span id="l-spent">—</span></div></div></div>
+      <div class="leg"><span class="sw" style="background:var(--navy-soft)"></span><div><div class="leg-l">Still to be spent (budgeted)</div><div class="leg-v">UGX <span id="l-commit">—</span></div></div></div>
+      <div class="leg"><span class="sw" style="background:var(--free)"></span><div><div class="leg-l">Not allocated to any line</div><div class="leg-v">UGX <span id="l-free">—</span></div></div></div>
+    </div>
+    <p class="warnline" id="shortfall" hidden>The cash on hand does not cover the remaining budget lines at their estimates.</p>
+  </section>
+
+  <h2 class="sec-h">Budget against actual spending</h2>
+  <div class="grid2">
+    <section class="card" aria-labelledby="bva-h">
+      <h3 class="card-h" id="bva-h">Estimate and actual cost by line</h3>
+      <p class="card-n">The pale bar is the budgeted amount; the dark bar is what has been paid so far. A red bar means the line has cost more than budgeted.</p>
+      <div class="keys"><span><i class="sw" style="background:var(--navy-pale);border:1px solid var(--navy-soft)"></i>Budgeted</span><span><i class="sw" style="background:var(--navy)"></i>Paid</span><span><i class="sw" style="background:var(--bad)"></i>Paid, over budget</span></div>
+      <div class="bars" id="bars" style="position:relative"><div class="empty">—</div></div>
+      <div class="axis" id="axis" hidden><div></div><div><span>0</span><span id="ax-mid"></span><span id="ax-max"></span></div></div>
+    </section>
+    <section class="card" aria-labelledby="grp-h">
+      <h3 class="card-h" id="grp-h">Summary by budget section</h3>
+      <p class="card-n">Saving is the estimated cost of the quantities bought minus what was actually paid; a negative figure is an overspend.</p>
+      <div class="tw"><table>
+        <thead><tr><th>Section</th><th class="n">Budgeted</th><th class="n">Paid</th><th class="n">Saving</th><th class="n">Used</th></tr></thead>
+        <tbody id="groups"></tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <section class="card" aria-labelledby="lines-h">
+    <h3 class="card-h" id="lines-h">Line-by-line detail</h3>
+    <p class="card-n">Each budget line with its estimated quantity and unit cost beside what has actually been bought and at what average price.</p>
+    <div class="tw"><table>
+      <thead><tr><th>S/N</th><th>Item</th><th class="hide-sm">Description</th><th class="n">Qty</th><th class="n">Est. unit cost</th><th class="n">Est. total</th><th class="n">Qty bought</th><th class="n">Actual unit cost</th><th class="n">Actual total</th><th class="n">Saving</th><th>Status</th></tr></thead>
+      <tbody id="lines"></tbody>
+    </table></div>
+  </section>
+
+  <section class="card" aria-labelledby="book-h">
+    <h3 class="card-h" id="book-h">Balance after each purchase</h3>
+    <p class="card-n">Every amount received and every purchase, in date order. The last column is the cash that remained after that entry.</p>
+    <div class="tw"><table>
+      <thead><tr><th>Date</th><th>Entry</th><th>Budget S/N</th><th class="hide-sm">Receipt no.</th><th class="n">Money in</th><th class="n">Money out</th><th class="n">Balance after</th></tr></thead>
+      <tbody id="book"></tbody>
+    </table></div>
+  </section>
+</main>
+<script>
+// ===== Where the figures come from =====
+// The three "Publish to the web" CSV links from the Google Sheet.
+const SOURCES = [
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_drAoNfI7cAtGIfravK8SvVlCCj54rWROqZzSE5fdWIz04lLa-bW020UtGOJ9hLHpquwVbxg1tpeH/pub?gid=1055591406&single=true&output=csv',
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_drAoNfI7cAtGIfravK8SvVlCCj54rWROqZzSE5fdWIz04lLa-bW020UtGOJ9hLHpquwVbxg1tpeH/pub?gid=1510231477&single=true&output=csv',
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_drAoNfI7cAtGIfravK8SvVlCCj54rWROqZzSE5fdWIz04lLa-bW020UtGOJ9hLHpquwVbxg1tpeH/pub?gid=1768808388&single=true&output=csv',
+]; // Budget, Purchases and Money received tabs, in any order: the page tells them apart by their column headings.
+const REFRESH_MINUTES = 5;
+
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const fmt = (v) => (v == null || !Number.isFinite(v) ? '' : Math.round(v).toLocaleString('en-US'));
+  const pct = (v) => (v == null ? '' : Math.round(v * 100) + '%');
+  const num = (v) => { const n = Number(String(v ?? '').replace(/[,\s]/g, '').replace(/^UGX/i, '')); return Number.isFinite(n) ? n : 0; };
+  const key = (v) => String(v ?? '').trim().toUpperCase();
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const td = (tr, text, cls) => { const c = el('td', cls, text ?? ''); tr.append(c); return c; };
+
+  // ---------- CSV ----------
+  function parseCSV(text) {
+    const rows = []; let row = [], field = '', q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+        else field += c;
+      } else if (c === '"') q = true;
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && text[i + 1] === '\n') i++;
+        row.push(field); rows.push(row); row = []; field = '';
+      } else field += c;
+    }
+    if (field !== '' || row.length) { row.push(field); rows.push(row); }
+    const head = (rows.shift() || []).map((h) => h.replace(/^\uFEFF/, '').trim().toLowerCase());
+    const out = rows.filter((r) => r.some((x) => x.trim() !== '')).map((r) => Object.fromEntries(head.map((h, i) => [h, (r[i] ?? '').trim()])));
+    out.head = head;
+    return out;
+  }
+  const pick = (r, ...names) => { for (const n of names) { const v = r[n.toLowerCase()]; if (v != null && v !== '') return v; } return ''; };
+
+  // Dates arrive as 2026-11-04 or 04/11/2026 (day first). Returns "YYYY-MM-DD" or "".
+  function isoDate(s) {
+    s = String(s || '').trim();
+    let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (m) return `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`;
+    m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+    return '';
+  }
+  function stamp(s) { // timestamp for ordering entries made on the same day
+    const d = isoDate(s); const t = (String(s).match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/) || []);
+    return d + 'T' + (t[1] || '0').padStart(2, '0') + ':' + (t[2] || '00') + ':' + (t[3] || '00');
+  }
+  const day = (iso) => { const d = new Date(iso + 'T00:00:00Z'); return isNaN(d) ? iso : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }); };
+
+  function toBudget(rows) {
+    return rows.map((r, i) => ({
+      sn: pick(r, 'S/N'), item: pick(r, 'Item'), description: pick(r, 'Description'),
+      group: pick(r, 'Section') || 'Other', qty: num(pick(r, 'Quantity')), unit_cost_est: num(pick(r, 'Estimated unit cost (UGX)')), order: i,
+    })).filter((b) => b.sn && b.item);
+  }
+  function toPurchases(rows) {
+    return rows.map((r) => {
+      const line = pick(r, 'Budget line'); const m = line.match(/^([A-Za-z0-9-]+)\.\s/);
+      const qty = num(pick(r, 'Quantity')), unit = num(pick(r, 'Unit price (UGX)'));
+      return {
+        date: isoDate(pick(r, 'Date')), at: stamp(pick(r, 'Timestamp')), sn: m ? m[1] : 'OTHER',
+        item: pick(r, 'What was bought') || (m ? line.slice(m[0].length) : line) || 'Purchase',
+        qty, unit_price: unit, total: qty * unit, vendor: pick(r, 'Seller'), receipt: pick(r, 'Receipt no.'),
+        by: pick(r, 'Recorded by'), notes: pick(r, 'Notes'),
+      };
+    }).filter((p) => p.date && p.total > 0);
+  }
+  function toFunds(rows) {
+    return rows.map((r) => ({
+      date: isoDate(pick(r, 'Date')), at: stamp(pick(r, 'Timestamp')), amount: num(pick(r, 'Amount (UGX)')),
+      source: pick(r, 'From / description') || 'Money received', by: pick(r, 'Recorded by'), notes: pick(r, 'Notes'),
+    })).filter((f) => f.date && f.amount > 0);
+  }
+
+  // ---------- calculations ----------
+  function compute(S) {
+    const known = new Set(S.budget.map((l) => key(l.sn)));
+    const rows = S.budget.map((b) => {
+      const ps = S.purchases.filter((p) => key(p.sn) === key(b.sn));
+      const qty = b.qty, unit_est = b.unit_cost_est, est_total = qty * unit_est;
+      const qty_bought = ps.reduce((s, p) => s + p.qty, 0);
+      const actual = ps.reduce((s, p) => s + p.total, 0);
+      const reserve = b.group === 'Contingency';
+      const status = reserve ? (actual > 0 ? 'In use' : 'Unused') : ps.length === 0 ? 'Not yet bought' : qty_bought >= qty ? 'Bought' : 'Partly bought';
+      return {
+        sn: b.sn, item: b.item, description: b.description, group: b.group, qty, unit_est, est_total,
+        qty_bought, unit_actual: qty_bought > 0 ? actual / qty_bought : null, actual,
+        variance: reserve || ps.length === 0 ? null : unit_est * qty_bought - actual,
+        status, remaining: status === 'Bought' ? 0 : Math.max(est_total - actual, 0),
+      };
+    });
+    const extra = S.purchases.filter((p) => !known.has(key(p.sn)));
+    if (extra.length) {
+      const a = extra.reduce((s, p) => s + p.total, 0);
+      rows.push({ sn: 'X', item: 'Unbudgeted purchases', description: extra.length + ' purchase(s) not on the budget', group: 'Unbudgeted', qty: null, unit_est: null, est_total: 0, qty_bought: null, unit_actual: null, actual: a, variance: -a, status: 'Unbudgeted', remaining: 0 });
+    }
+    const funds_in = S.funds.reduce((s, f) => s + f.amount, 0);
+    const budget_total = rows.reduce((s, r) => s + r.est_total, 0);
+    const spent = rows.reduce((s, r) => s + r.actual, 0);
+    const commit = rows.reduce((s, r) => s + r.remaining, 0);
+    const cash = funds_in - spent, projected = cash - commit;
+    return { rows, funds_in, budget_total, spent, commit, cash, projected, n: S.purchases.length };
+  }
+
+  // ---------- rendering ----------
+  function render(S) {
+    const t = compute(S);
+    const lede = $('lede'); lede.replaceChildren();
+    const b = (v, neg) => el('b', neg ? 'neg' : '', v);
+    lede.append('Of UGX ', b(fmt(t.funds_in)), ' received, UGX ', b(fmt(t.spent)), ` has been spent across ${t.n} recorded purchase${t.n === 1 ? '' : 's'}, leaving UGX `, b(fmt(t.cash)),
+      ' on hand. If every remaining budget line is bought at its estimate, the fund ends with a projected ', b(t.projected < 0 ? 'shortfall' : 'surplus', t.projected < 0), ' of UGX ', b(fmt(Math.abs(t.projected)), t.projected < 0), '.');
+    $('k-funds').textContent = fmt(t.funds_in);
+    $('k-budget').textContent = fmt(t.budget_total);
+    $('k-spent').textContent = fmt(t.spent);
+    $('k-share').textContent = pct(t.budget_total ? t.spent / t.budget_total : 0);
+    $('k-cash').textContent = fmt(t.cash);
+    const kp = $('k-proj'); kp.textContent = fmt(t.projected); kp.className = 'big ' + (t.projected < 0 ? 'neg' : 'pos');
+    const alloc = $('alloc'); alloc.replaceChildren();
+    if (t.funds_in > 0) {
+      [[t.spent, 'var(--navy)'], [Math.min(t.commit, Math.max(t.cash, 0)), 'var(--navy-soft)'], [Math.max(t.projected, 0), 'var(--free)']].forEach(([v, c]) => {
+        if (v <= 0) return; const s = el('span'); s.style.width = (100 * v / t.funds_in) + '%'; s.style.background = c; alloc.append(s);
+      });
+    }
+    $('l-spent').textContent = fmt(t.spent); $('l-commit').textContent = fmt(t.commit); $('l-free').textContent = fmt(Math.max(t.projected, 0));
+    $('shortfall').hidden = !(t.projected < 0);
+    renderBars(t.rows); renderGroups(t.rows); renderLines(t.rows); renderBook(S);
+  }
+
+  function renderBars(rows) {
+    const box = $('bars'); box.replaceChildren();
+    const rs = rows.filter((r) => r.est_total > 0 || r.actual > 0);
+    if (!rs.length) { box.append(el('div', 'empty', 'No budget lines yet.')); $('axis').hidden = true; return; }
+    const max = Math.max(...rs.map((r) => Math.max(r.est_total, r.actual))) || 1;
+    const tip = el('div', 'tip'); tip.hidden = true;
+    rs.forEach((r) => {
+      const row = el('div', 'bar-row');
+      const label = el('div', 'bar-l', `${r.sn}. ${r.item}`); label.title = `${r.sn}. ${r.item}`;
+      const track = el('div', 'bar-t');
+      if (r.est_total > 0) { const e = el('div', 'bar-e'); e.style.width = (100 * r.est_total / max) + '%'; track.append(e); }
+      if (r.actual > 0) { const a = el('div', 'bar-a' + (r.actual > r.est_total ? ' over' : '')); a.style.width = Math.max(100 * r.actual / max, .6) + '%'; track.append(a); }
+      row.append(label, track);
+      row.addEventListener('mousemove', (ev) => {
+        tip.replaceChildren(el('b', null, `${r.sn}. ${r.item}`), el('div', null, 'Budgeted: UGX ' + fmt(r.est_total)), el('div', null, 'Paid: UGX ' + fmt(r.actual)), el('div', null, r.status));
+        tip.hidden = false;
+        const bb = box.getBoundingClientRect();
+        tip.style.left = Math.min(Math.max(ev.clientX - bb.left + 12, 0), box.clientWidth - tip.offsetWidth) + 'px';
+        tip.style.top = (ev.clientY - bb.top + 14) + 'px';
+      });
+      row.addEventListener('mouseleave', () => { tip.hidden = true; });
+      box.append(row);
+    });
+    box.append(tip);
+    $('axis').hidden = false; $('ax-mid').textContent = fmt(max / 2); $('ax-max').textContent = fmt(max);
+  }
+
+  const pillCls = { 'Bought': 'done', 'Partly bought': 'part', 'In use': 'part', 'Not yet bought': 'none', 'Unused': 'none', 'Unbudgeted': 'out' };
+  const signCls = (v) => (v == null ? 'n' : v < 0 ? 'n neg' : v > 0 ? 'n pos' : 'n mut');
+
+  function renderGroups(rows) {
+    const tb = $('groups'); tb.replaceChildren();
+    const order = [...new Set(rows.map((r) => r.group))];
+    const make = (g, rs) => { const est = rs.reduce((s, r) => s + r.est_total, 0), act = rs.reduce((s, r) => s + r.actual, 0), pr = rs.filter((r) => r.variance != null); return { g, est, act, v: pr.length ? pr.reduce((s, r) => s + r.variance, 0) : null, share: est ? act / est : null }; };
+    [...order.map((g) => make(g, rows.filter((r) => r.group === g))), make('All lines', rows)].forEach((x) => {
+      const tr = el('tr', x.g === 'All lines' ? 'total' : '');
+      td(tr, x.g); td(tr, fmt(x.est), 'n'); td(tr, fmt(x.act), 'n'); td(tr, fmt(x.v), signCls(x.v)); td(tr, pct(x.share), 'n');
+      tb.append(tr);
+    });
+  }
+
+  function renderLines(rows) {
+    const tb = $('lines'); tb.replaceChildren();
+    if (!rows.length) { const tr = el('tr'); td(tr, 'No budget lines yet.', 'empty').colSpan = 11; tb.append(tr); return; }
+    rows.forEach((r) => {
+      const tr = el('tr');
+      td(tr, r.sn, 'mut'); td(tr, r.item); td(tr, r.description, 'mut hide-sm');
+      td(tr, r.qty == null ? '' : r.qty.toLocaleString('en-US'), 'n'); td(tr, fmt(r.unit_est), 'n'); td(tr, fmt(r.est_total), 'n');
+      td(tr, r.qty_bought == null ? '' : r.qty_bought.toLocaleString('en-US'), 'n'); td(tr, fmt(r.unit_actual), 'n'); td(tr, fmt(r.actual), 'n');
+      td(tr, fmt(r.variance), signCls(r.variance));
+      const st = el('td'); st.append(el('span', 'pill ' + (pillCls[r.status] || 'none'), r.status)); tr.append(st);
+      tb.append(tr);
+    });
+  }
+
+  function renderBook(S) {
+    const tb = $('book'); tb.replaceChildren();
+    const entries = [
+      ...S.funds.map((f) => ({ date: f.date, at: f.at, o: 0, title: f.source, sub: f.notes, sn: '', receipt: '', inn: f.amount, out: null, by: f.by })),
+      ...S.purchases.map((p) => ({ date: p.date, at: p.at, o: 1, title: p.item,
+        sub: [`${p.qty.toLocaleString('en-US')} × ${fmt(p.unit_price)}`, p.vendor, p.notes].filter(Boolean).join(' · '),
+        sn: p.sn === 'OTHER' ? 'Other' : p.sn, receipt: p.receipt, inn: null, out: p.total, by: p.by })),
+    ].sort((a, b) => a.date.localeCompare(b.date) || a.o - b.o || a.at.localeCompare(b.at));
+    if (!entries.length) { const tr = el('tr'); td(tr, 'No entries yet.', 'empty').colSpan = 7; tb.append(tr); return; }
+    let bal = 0;
+    entries.forEach((e, i) => {
+      bal += (e.inn || 0) - (e.out || 0);
+      const tr = el('tr', i === entries.length - 1 ? 'bal-last' : '');
+      td(tr, day(e.date), 'mut');
+      const c = el('td'); c.append(el('span', null, e.title));
+      if (e.sub) c.append(el('span', 'by', e.sub));
+      if (e.by) c.append(el('span', 'by', 'Recorded by ' + e.by));
+      tr.append(c);
+      td(tr, e.sn, 'mut'); td(tr, e.receipt, 'mut hide-sm');
+      td(tr, fmt(e.inn), 'n pos'); td(tr, fmt(e.out), 'n neg'); td(tr, fmt(bal), 'n' + (bal < 0 ? ' neg' : ''));
+      tb.append(tr);
+    });
+  }
+
+  // ---------- loading ----------
+  const notice = (text) => { const n = $('nodb'); n.textContent = text || ''; n.hidden = !text; };
+  async function getCSV(url) {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if (/^\s*</.test(text)) throw new Error('not a CSV');
+    return parseCSV(text);
+  }
+  let loading = false, everLoaded = false;
+  async function load() {
+    if (loading) return; loading = true;
+    try {
+      const tables = await Promise.all(SOURCES.map(getCSV));
+      const find = (col) => tables.find((t) => t.head.includes(col));
+      const b = find('s/n'), p = find('budget line'), f = find('amount (ugx)');
+      if (!b || !p || !f) {
+        notice('One of the sheet tabs could not be recognised. Check that the Budget, Purchases and Money received tabs are each published as CSV and their column headings have not been renamed.');
+        if (!everLoaded) $('lede').textContent = 'The figures are not available right now.';
+        loading = false; return;
+      }
+      render({ budget: toBudget(b), purchases: toPurchases(p), funds: toFunds(f) });
+      everLoaded = true; notice('');
+      $('updated').textContent = 'Figures checked at ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '. They refresh every few minutes; new entries can take up to 5 minutes to appear.';
+    } catch (err) {
+      notice(everLoaded ? 'Could not refresh the figures just now. Showing the last figures loaded; the page will try again shortly.' : 'The figures could not be loaded. Please check your internet connection and reload the page.');
+      if (!everLoaded) $('lede').textContent = 'The figures are not available right now.';
+    }
+    loading = false;
+  }
+  $('refresh').addEventListener('click', load);
+  load();
+  setInterval(load, REFRESH_MINUTES * 60 * 1000);
+})();
+</script>
+</body>
+</html>
